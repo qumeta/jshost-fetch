@@ -1,0 +1,22 @@
+{
+  "name": "jshost-fetch",
+  "version": "1.0.0",
+  "description": "jshost-fetch",
+  "main": "./dist/fetch.umd.js",
+  "module": "./fetch.js",
+  "repository": "https://github.com/qumeta/jshost-fetch.git",
+  "author": "qumeta <lilinghui@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "build": "rollup --config --bundleConfigAsCjs"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "rollup": "^4.1.4"
+  },
+  "files": [
+    "LICENSE",
+    "dist/fetch.umd.js",
+    "fetch.js"
+  ]
+}

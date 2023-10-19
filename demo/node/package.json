@@ -1,0 +1,11 @@
+{
+  "name": "jshot-fetch-on-node",
+  "version": "0.0.1",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "jshost-fetch": "file:../..",
+    "node-fetch": "^3.3.2"
+  }
+}
