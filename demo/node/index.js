@@ -1,11 +1,13 @@
+/*
 const { fetch } = require('jshost-fetch')
 
 fetch('http://127.0.0.1:6000')
   .then(data => {
     console.log(data)
   });
-  
-/*
+ */
+
+
 import nodeFetch from 'node-fetch';
 const realFetch = nodeFetch.default || nodeFetch
 
@@ -23,6 +25,7 @@ fetch('http://127.0.0.1:6000')
     if (res.status >= 400) {
       throw new Error('Bad response from server')
     }
+
     return res.json()
   })
   .then(data => {
@@ -31,4 +34,3 @@ fetch('http://127.0.0.1:6000')
   .catch(err => {
     console.error(err)
   })
-  */

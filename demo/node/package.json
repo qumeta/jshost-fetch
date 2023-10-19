@@ -1,6 +1,7 @@
 {
   "name": "jshot-fetch-on-node",
   "version": "0.0.1",
+  "type": "module",
   "scripts": {
     "start": "node index.js"
   },

@@ -431,7 +431,19 @@ function decode(body) {
 }
 
 function parseHeaders(rawHeaders) {
+
     var headers = new Headers()
+
+    // sync with "Napi::Value XMLHttpRequest::GetAllResponseHeaders(const Napi::CallbackInfo&)
+    for (let key in rawHeaders) {
+        var value = rawHeaders[key];
+        try {
+            headers.append(key, value)
+        } catch (error) {
+            console.warn('Response ' + error.message)
+        }
+    }
+    /* 
     // Replace instances of \r\n and \n followed by at least one space or horizontal tab with a space
     // https://tools.ietf.org/html/rfc7230#section-3.2
     var preProcessedHeaders = rawHeaders.replace(/\r?\n[\t ]+/g, ' ')
@@ -455,6 +467,8 @@ function parseHeaders(rawHeaders) {
                 }
             }
         })
+    */
+
     return headers
 }
 
@@ -536,6 +550,7 @@ export function fetch(input, init) {
             xhr.abort()
         }
 
+        /* don't support
         xhr.onload = function () {
             var options = {
                 statusText: xhr.statusText,
@@ -572,6 +587,7 @@ export function fetch(input, init) {
                 reject(new DOMException('Aborted', 'AbortError'))
             }, 0)
         }
+        */
 
         function fixUrl(url) {
             try {
@@ -627,6 +643,54 @@ export function fetch(input, init) {
             }
         }
 
+        function onLoadEnd() {
+            //console.log("onLoadEnd");
+        }
+
+        const IsFileURL = () => {
+            return typeof location !== "undefined" && location.protocol === "file:";
+        };
+
+        function onReadyStateChange() {
+            // In case of undefined state in some browsers.
+            if (xhr.readyState === (XMLHttpRequest.DONE || 4)) {
+                xhr.removeEventListener("readystatechange", onReadyStateChange);
+                
+                if ((xhr.status >= 200 && xhr.status < 300) || (xhr.status === 0 && (!IsWindowObjectExist() || IsFileURL()))) {
+                    try {
+                        var options = {
+                            statusText: xhr.statusText,
+                            headers: parseHeaders(xhr.getAllResponseHeaders() || '')
+                        }
+                        // This check if specifically for when a user fetches a file locally from the file system
+                        // Only if the status is out of a normal range
+                        if (request.url.startsWith('file://') && (xhr.status < 200 || xhr.status > 599)) {
+                            options.status = 200;
+                        } else {
+                            options.status = xhr.status;
+                        }
+                        options.url = 'responseURL' in xhr ? xhr.responseURL : options.headers.get('X-Request-URL')
+                        var body = 'response' in xhr ? xhr.response : xhr.responseText
+
+                        setTimeout(function () {
+                            resolve(new Response(body, options))
+                        }, 0)
+                    } catch (e) {
+                        handleError(e);
+                    }
+                    return;
+                }
+
+                //const error = new RequestFileError("Error status: " + xhr.status + " " + xhr.statusText + " - Unable to load " + loadUrl, xhr);
+                setTimeout(function () {
+                    reject(new TypeError("Error status: " + xhr.status + " " + xhr.statusText + " - Unable to load " + loadUrl))
+                }, 0)
+            }
+        }
+
+        xhr.addEventListener("loadend", onLoadEnd);
+        xhr.addEventListener("readystatechange", onReadyStateChange);
+
         xhr.send(typeof request._bodyInit === 'undefined' ? null : request._bodyInit)
     })
 }
@@ -639,6 +703,3 @@ if (!g.fetch) {
     g.Request = Request
     g.Response = Response
 }
-
-
-console.log("fetch.js");

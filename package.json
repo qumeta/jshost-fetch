@@ -1,5 +1,5 @@
 {
-  "name": "jshost-fetch",
+  "name": "@qumeta/jshost-fetch",
   "version": "1.0.0",
   "description": "jshost-fetch",
   "main": "./dist/fetch.umd.js",
