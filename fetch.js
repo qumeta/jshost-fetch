@@ -245,7 +245,7 @@ function Body() {
             this._bodyBlob = body
         } else if (support.formData && FormData.prototype.isPrototypeOf(body)) {
             this._bodyFormData = body
-        } else if (support.searchParams && URLSearchParams.prototype.isPrototypeOf(body)) {
+        } else if (support.searchParams && URLSearchParams.prototype.isPrototypeOf(body) && !ArrayBuffer.prototype.isPrototypeOf(body)) {
             this._bodyText = body.toString()
         } else if (support.arrayBuffer && support.blob && isDataView(body)) {
             this._bodyArrayBuffer = bufferClone(body.buffer)
